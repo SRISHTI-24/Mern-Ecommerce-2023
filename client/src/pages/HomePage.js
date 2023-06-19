@@ -6,6 +6,7 @@ import { Checkbox, Radio } from "antd";
 import { Prices } from "../components/Prices";
 import { useCart } from "../context/cart";
 import "../style/Homepage.css";
+import { AiOutlineReload } from "react-icons/ai";
 const HomePage = () => {
   const navigate = useNavigate();
   const [cart, setCart] = useCart();
@@ -54,7 +55,22 @@ const HomePage = () => {
       console.log(error);
     }
   };
-
+  useEffect(() => {
+    if (page === 1) return;
+    loadMore();
+  }, [page]);
+  //load more
+  const loadMore = async () => {
+    try {
+      setLoading(true);
+      const { data } = await axios.get(`/api/v1/product/product-list/${page}`);
+      setLoading(false);
+      setProducts([...products, ...data?.products]);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
   // filter by cat
 
   const handlefilter = (value, id) => {
